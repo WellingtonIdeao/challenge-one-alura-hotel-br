@@ -21,7 +21,17 @@ Tabela de conteúdos
 =====================
 
 * [Sobre o projeto](#-sobre-o-projeto)
+* [Funcionalidades](#-funcionalidades)
 * [Tecnologias](#-tecnologias)
+* [Layout](#-layout)
+     * [Desktop](#desktop) 
+   * [Como executar o projeto](#-como-executar-o-projeto)
+     * [Pré-requisitos](#pré-requisitos)
+     * [Compilando e executando o aplicação localmente](#user-content--compilando-e-executando-o-aplicação-localmente)
+     * [Executando aplicação via arquivo jar](#user-content--executando-aplicação-via-arquivo-jar)
+   * [Tecnologias](#-tecnologias)
+   * [Autor](#-autor)
+   * [Licença](#-licença)
 
 ---
 
@@ -35,7 +45,21 @@ ONE é um programa de educação e empregabilidade com objetivo social de capaci
 
 ---
 
+## ⚙ Funcionalidades
 
+---
+
+## 🎨 Layout
+
+### Desktop
+
+---
+
+## 🚀 Como executar o projeto
+
+### Pré-requisitos
+
+---
 
 ## 🛠 Tecnologias
 As seguintes ferramentas e tecnologias foram usadas na construção do projeto:
@@ -49,6 +73,21 @@ As seguintes ferramentas e tecnologias foram usadas na construção do projeto:
 * [Paradigma de programação orientada a objetos](https://pt.wikipedia.org/wiki/Programa%C3%A7%C3%A3o_orientada_a_objetos)
 
 ---
+
+## 🦸 Autor
+
+<a><sub><b>Wellington Ideão</b></sub></a> <a href="https://github.com/WellingtonIdeao" title="Github">🚀</a>
+
+Feito por Wellington Ideão 👋🏽 Entre em contato!
+
+[![Linkedin Badge](https://img.shields.io/badge/-Wellington-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/wellington-ideao/)](https://www.linkedin.com/in/wellington-ideao/)
+[![Gmail Badge](https://img.shields.io/badge/-wellington.ideao@gmail.com-c14438?style=flat-square&logo=Gmail&logoColor=white&link=mailto:wellington.ideao@gmail.com)](mailto:wellington.ideao@gmail.com)
+
+---
+
+## 📝 Licença
+Este projeto esta sobe a licença [GPL-3.0](./LICENSE).
+
 
 ## ⚠️ Importante! ⚠️
 
