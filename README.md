@@ -22,16 +22,13 @@ Tabela de conteúdos
 
 * [Sobre o projeto](#-sobre-o-projeto)
 * [Funcionalidades](#-funcionalidades)
-* [Tecnologias](#-tecnologias)
 * [Layout](#-layout)
-     * [Desktop](#desktop) 
-   * [Como executar o projeto](#-como-executar-o-projeto)
-     * [Pré-requisitos](#pré-requisitos)
-     * [Compilando e executando o aplicação localmente](#user-content--compilando-e-executando-o-aplicação-localmente)
-     * [Executando aplicação via arquivo jar](#user-content--executando-aplicação-via-arquivo-jar)
-   * [Tecnologias](#-tecnologias)
-   * [Autor](#-autor)
-   * [Licença](#-licença)
+	* [Desktop](#desktop) 
+* [Como executar o projeto](#-como-executar-o-projeto)
+	* [Pré-requisitos](#pré-requisitos)
+* [Tecnologias](#-tecnologias)
+* [Autor](#-autor)
+* [Licença](#-licença)
 
 ---
 
@@ -46,6 +43,12 @@ ONE é um programa de educação e empregabilidade com objetivo social de capaci
 ---
 
 ## ⚙ Funcionalidades
+
+- [ ] Sistema de autenticação de usuários;
+- [ ] Permite criar, editar e excluir uma reserva para clientes;
+- [ ] Pesquisa informações sobre os clientes e reservas;
+- [ ] Registrar, editar e excluir os dados dos hóspedes;
+- [ ] Calcule o valor da reserva com base no número de dias da reserva e uma taxa diária;
 
 ---
 
