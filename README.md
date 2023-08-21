@@ -2,26 +2,54 @@
 
 <p align="center" >
      <img width="400" heigth="400" src="https://user-images.githubusercontent.com/101413385/173164615-192ca98a-1a44-480e-9229-9f82f456eec8.png">
-
 </p>
+<h3 align="center">
+    🏨 Sistema para controle de hóspedes do Hotel Alura 🛎️
+</h3>
+<p align="center">
+ <img alt="Repository size" src="https://img.shields.io/github/repo-size/wellingtonideao/challenge-one-alura-hotel-br">
+ <a href="https://github.com/WellingtonIdeao/challenge-one-alura-hotel-br/commits/repositorio-base">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/wellingtonideao/challenge-one-alura-hotel-br">
+  </a>
+  <img alt="License" src="https://img.shields.io/github/license/wellingtonideao/challenge-one-alura-hotel-br">
+</p>
+<h4 align="center">
+	🚧 Em desenvolvimento... 🚀 🚧
+</h4>
+
+Tabela de conteúdos
+=====================
+
+* [Sobre o projeto](#-sobre-o-projeto)
+* [Tecnologias](#-tecnologias)
 
 ---
-##  Primeiros Passos:
 
-#### 🔹 Marque esse projeto com uma ⭐
-#### 🔹 Siga as orientações do que temos neste repositório 📚
-#### 🔹 Visite a página do desafio clicando aqui! [Link do Challenge](https://www.alura.com.br/challenges/oracle-one-back-end/hotelalura) 📃 
-</br>
+## 💻 Sobre o projeto
 
-## 🖥️ Tecnologias Utilizadas:
+É um sistema para controle de hóspedes do Hotel Alura. Hotel Alura é conhecido por suas espetaculares instalações e pacotes promocionais para Desenvolvedores de Software.
 
-- Java
-- Eclipse
-- MySql
-- Biblioteca JCalendar
-- Plugin WindowBuilder </br>
+Projeto desenvolvido para o Challenge Backend da Alura Oracle Next Education - ONE.
+
+ONE é um programa de educação e empregabilidade com objetivo social de capacitar pessoas em tecnologia e conectá-las com o mercado de trabalho por meio de empresas parceiras.
 
 ---
+
+
+
+## 🛠 Tecnologias
+As seguintes ferramentas e tecnologias foram usadas na construção do projeto:
+* [Git](https://git-scm.com)
+* [Java 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+* [Eclipse IDE](https://www.eclipse.org/downloads)
+* [Maven](https://maven.apache.org/download.cgi)
+* [Banco de dados MySQL](https://www.mysql.com/downloads)
+* [Biblioteca JCalendar](https://toedter.com/jcalendar)
+* [Plugin Eclipse WindowBuilder](https://projects.eclipse.org/projects/tools.windowbuilder)
+* [Paradigma de programação orientada a objetos](https://pt.wikipedia.org/wiki/Programa%C3%A7%C3%A3o_orientada_a_objetos)
+
+---
+
 ## ⚠️ Importante! ⚠️
 
 ☕ Use o Java na versão 8 ou superior para ter compatibilidade. 
