@@ -11,18 +11,28 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
+
+import br.com.ideao.alurahotel.controller.FormaPagamentoController;
+import br.com.ideao.alurahotel.controller.ReservaController;
+import br.com.ideao.alurahotel.model.FormaPagamento;
+import br.com.ideao.alurahotel.model.Reserva;
+
 import java.awt.Font;
 import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+
 
 
 @SuppressWarnings("serial")
@@ -32,11 +42,14 @@ public class ReservasView extends JFrame {
 	public static JTextField txtValor;
 	public static JDateChooser txtDataE;
 	public static JDateChooser txtDataS;
-	public static JComboBox<String> txtFormaPagamento;
+	public static JComboBox<FormaPagamento> txtFormaPagamento;
 	int xMouse, yMouse;
 	private JLabel labelExit;
 	private JLabel lblValorSimbolo; 
 	private JLabel labelAtras;
+	private FormaPagamentoController formaPagamentoController;
+	private ReservaController reservaController;
+	private Reserva  reserva;
 
 	/**
 	 * Launch the application.
@@ -72,7 +85,8 @@ public class ReservasView extends JFrame {
 		setLocationRelativeTo(null);
 		setUndecorated(true);
 		
-
+		this.formaPagamentoController = new FormaPagamentoController();
+		this.reservaController = new ReservaController();
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(null);
@@ -99,7 +113,11 @@ public class ReservasView extends JFrame {
 		separator_1_1.setBackground(SystemColor.textHighlight);
 		panel.add(separator_1_1);
 		
+		Date dataAtual = this.reservaController.convertToLocalDateToDate(LocalDate.now());
+		
 		txtDataE = new JDateChooser();
+		txtDataE.setDate(dataAtual);
+		txtDataE.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		txtDataE.getCalendarButton().setBackground(SystemColor.textHighlight);
 		txtDataE.getCalendarButton().setIcon(new ImageIcon(ReservasView.class.getResource("/br/com/ideao/alurahotel/imagens/icon-reservas.png")));
 		txtDataE.getCalendarButton().setFont(new Font("Roboto", Font.PLAIN, 12));
@@ -109,6 +127,15 @@ public class ReservasView extends JFrame {
 		txtDataE.setBorder(new LineBorder(SystemColor.window));
 		txtDataE.setDateFormatString("yyyy-MM-dd");
 		txtDataE.setFont(new Font("Roboto", Font.PLAIN, 18));
+		txtDataE.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				String nomePropriedade = evt.getPropertyName();
+				if("date".equals(nomePropriedade)) {
+					criarReservaTemporaria();
+				}
+			}
+		});
 		panel.add(txtDataE);
 		
 		lblValorSimbolo = new JLabel("$");
@@ -141,6 +168,10 @@ public class ReservasView extends JFrame {
 		txtDataS.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				//Ativa o evento, após o usuário selecionar as datas, o valor da reserva deve ser calculado
+				String nomePropriedade = evt.getPropertyName();
+				if("date".equals(nomePropriedade)) {
+					criarReservaTemporaria();
+				}
 			}
 		});
 		txtDataS.setDateFormatString("yyyy-MM-dd");
@@ -158,8 +189,8 @@ public class ReservasView extends JFrame {
 		txtValor.setEditable(false);
 		txtValor.setFont(new Font("Roboto Black", Font.BOLD, 17));
 		txtValor.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-		panel.add(txtValor);
 		txtValor.setColumns(10);
+		panel.add(txtValor);
 		
 		JLabel lblValor = new JLabel("VALOR DA RESERVA");
 		lblValor.setForeground(SystemColor.textInactiveText);
@@ -167,12 +198,17 @@ public class ReservasView extends JFrame {
 		lblValor.setFont(new Font("Roboto Black", Font.PLAIN, 18));
 		panel.add(lblValor);
 		
-		txtFormaPagamento = new JComboBox();
+		txtFormaPagamento = new JComboBox<>();
 		txtFormaPagamento.setBounds(68, 417, 289, 38);
 		txtFormaPagamento.setBackground(SystemColor.text);
 		txtFormaPagamento.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
 		txtFormaPagamento.setFont(new Font("Roboto", Font.PLAIN, 16));
-		txtFormaPagamento.setModel(new DefaultComboBoxModel(new String[] {"Cartão de Crédito", "Cartão de Débito", "Dinheiro"}));
+		
+		List<FormaPagamento> formasPagamentos = this.listar();
+		for(FormaPagamento fp:  formasPagamentos) {
+			txtFormaPagamento.addItem(fp);
+		}
+		//txtFormaPagamento.setModel(new DefaultComboBoxModel(new String[] {"Cartão de Crédito", "Cartão de Débito", "Dinheiro"}));
 		panel.add(txtFormaPagamento);
 		
 		JLabel lblFormaPago = new JLabel("FORMA DE PAGAMENTO");
@@ -294,7 +330,8 @@ public class ReservasView extends JFrame {
 		btnProximo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null) {		
+				if (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null) {
+					reservar();
 					RegistroHospede registro = new RegistroHospede();
 					registro.setVisible(true);
 				} else {
@@ -318,13 +355,31 @@ public class ReservasView extends JFrame {
 
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
-	        xMouse = evt.getX();
-	        yMouse = evt.getY();
-	    }
+		 xMouse = evt.getX();
+		 yMouse = evt.getY();
+	 }
 
-	    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
-	        int x = evt.getXOnScreen();
-	        int y = evt.getYOnScreen();
-	        this.setLocation(x - xMouse, y - yMouse);
-}
+	 private void headerMouseDragged(java.awt.event.MouseEvent evt) {
+		 int x = evt.getXOnScreen();
+	     int y = evt.getYOnScreen();
+	     this.setLocation(x - xMouse, y - yMouse);
+	 }
+	 
+	 private List<FormaPagamento> listar(){
+		 return this.formaPagamentoController.listar();
+	 }
+	 
+	 private void reservar() {
+		 this.reservaController.cadastrar(this.reserva);
+	 }
+	
+	 private void criarReservaTemporaria() {
+		 LocalDate startDate = this.reservaController.convertDateToLocalDate(ReservasView.txtDataE.getDate());
+		 LocalDate endDate = this.reservaController.convertDateToLocalDate(ReservasView.txtDataS.getDate());
+		 this.reserva = new Reserva(startDate, endDate);
+		 FormaPagamento fp =  (FormaPagamento) ReservasView.txtFormaPagamento.getSelectedItem();
+		 this.reserva.setFormatoPagmentoId(fp.getId());
+		 ReservasView.txtValor.setText(String.valueOf(this.reserva.getValor()));
+	 }
+	 
 }

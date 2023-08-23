@@ -6,13 +6,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import br.com.ideao.alurahotel.dao.UserDao;
 import br.com.ideao.alurahotel.model.User;
-import br.com.ideao.alurahotel.utils.ConnectionFactory;
+import br.com.ideao.alurahotel.utils.JdbcUtil;
 
 public class UserController {
 	private UserDao userDao;
 	
 	public UserController() {
-		Connection connection = new ConnectionFactory().getConnection();
+		Connection connection = JdbcUtil.getConnection();
 		this.userDao = new UserDao(connection);
 	}
 	
