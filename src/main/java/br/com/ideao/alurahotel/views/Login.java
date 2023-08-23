@@ -18,10 +18,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 import br.com.ideao.alurahotel.controller.UserController;
-import br.com.ideao.alurahotel.model.User;
 
 public class Login extends JFrame {
 
@@ -156,7 +153,7 @@ public class Login extends JFrame {
 		panel.add(separator_1);
 		
 		txtSenha = new JPasswordField();
-		txtSenha.setText("");
+		txtSenha.setText("********");
 		txtSenha.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -201,7 +198,7 @@ public class Login extends JFrame {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Login();
+				autenticationAndLogin();
 			}
 		});
 		btnLogin.setBackground(SystemColor.textHighlight);
@@ -243,7 +240,7 @@ public class Login extends JFrame {
 		header.setLayout(null);
 	}
 	
-	private void Login() {
+	private void autenticationAndLogin() {
 	        String password=new String (txtSenha.getPassword());
 	        Boolean autenticated = this.userController.autenticate(txtUsuario.getText(),password);
 

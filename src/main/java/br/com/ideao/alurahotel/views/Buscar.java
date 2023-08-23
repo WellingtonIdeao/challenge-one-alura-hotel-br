@@ -110,7 +110,7 @@ public class Buscar extends JFrame {
 		modeloHospedes.addColumn("Telefone");
 		modeloHospedes.addColumn("Numero de Reserva");
 		JScrollPane scroll_tableHuespedes = new JScrollPane(tbHospedes);
-		panel.addTab("Huéspedes", new ImageIcon(Buscar.class.getResource("/br/com/ideao/alurahotel/imagens/pessoas.png")), scroll_tableHuespedes, null);
+		panel.addTab("Hóspedes", new ImageIcon(Buscar.class.getResource("/br/com/ideao/alurahotel/imagens/pessoas.png")), scroll_tableHuespedes, null);
 		scroll_tableHuespedes.setVisible(true);
 		
 		JLabel lblNewLabel_2 = new JLabel("");
@@ -141,8 +141,8 @@ public class Buscar extends JFrame {
 		btnAtras.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				MenuUsuario usuario = new MenuUsuario();
-				usuario.setVisible(true);
+				MenuUsuario menuUsuario = new MenuUsuario();
+				menuUsuario.setVisible(true);
 				dispose();				
 			}
 			@Override
@@ -171,8 +171,8 @@ public class Buscar extends JFrame {
 		btnexit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				MenuUsuario usuario = new MenuUsuario();
-				usuario.setVisible(true);
+				MenuUsuario menuUsuario = new MenuUsuario();
+				menuUsuario.setVisible(true);
 				dispose();
 			}
 			@Override
