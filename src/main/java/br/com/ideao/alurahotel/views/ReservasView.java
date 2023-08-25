@@ -396,6 +396,5 @@ public class ReservasView extends JFrame {
 		 Date endDate = ReservasView.txtDataS.getDate();
 		
 		 return  startDate.getTime() < endDate.getTime();
-	 }
-	 
+	 }	 
 }
