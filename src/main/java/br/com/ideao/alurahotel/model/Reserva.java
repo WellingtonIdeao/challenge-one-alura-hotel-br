@@ -59,7 +59,7 @@ public class Reserva {
 		return this.taxa.multiply(new BigDecimal(calcularDiasReservados()));
 	}
 	private Long calcularDiasReservados() {
-		return ChronoUnit.DAYS.between(this.dataEntrada, this.dataSaida);
+		return ChronoUnit.DAYS.between(this.dataEntrada, this.dataSaida.plusDays(1));
 	}
 
 }

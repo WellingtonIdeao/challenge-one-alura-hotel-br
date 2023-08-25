@@ -21,13 +21,4 @@ public class ReservaController {
 	public Reserva cadastrar(Reserva reserva) {
 		return this.reservaDao.cadastrar(reserva);
 	}
-	
-	public Date convertToLocalDateToDate(LocalDate dateToConvert) {
-	    return java.sql.Date.valueOf(dateToConvert);    
-	}
-	public LocalDate convertDateToLocalDate(java.util.Date date) {
-		return LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault());
-	}
-	
-
 }

@@ -16,6 +16,7 @@ import br.com.ideao.alurahotel.controller.FormaPagamentoController;
 import br.com.ideao.alurahotel.controller.ReservaController;
 import br.com.ideao.alurahotel.model.FormaPagamento;
 import br.com.ideao.alurahotel.model.Reserva;
+import br.com.ideao.alurahotel.utils.Conversor;
 
 import java.awt.Font;
 import javax.swing.JComboBox;
@@ -25,7 +26,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.beans.PropertyChangeEvent;
@@ -113,10 +113,7 @@ public class ReservasView extends JFrame {
 		separator_1_1.setBackground(SystemColor.textHighlight);
 		panel.add(separator_1_1);
 		
-		Date dataAtual = this.reservaController.convertToLocalDateToDate(LocalDate.now());
-		
 		txtDataE = new JDateChooser();
-		txtDataE.setDate(dataAtual);
 		txtDataE.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		txtDataE.getCalendarButton().setBackground(SystemColor.textHighlight);
 		txtDataE.getCalendarButton().setIcon(new ImageIcon(ReservasView.class.getResource("/br/com/ideao/alurahotel/imagens/icon-reservas.png")));
@@ -125,7 +122,7 @@ public class ReservasView extends JFrame {
 		txtDataE.getCalendarButton().setBounds(268, 0, 21, 33);
 		txtDataE.setBackground(Color.WHITE);
 		txtDataE.setBorder(new LineBorder(SystemColor.window));
-		txtDataE.setDateFormatString("yyyy-MM-dd");
+		txtDataE.setDateFormatString("dd 'de' MMMM 'de' yyyy");
 		txtDataE.setFont(new Font("Roboto", Font.PLAIN, 18));
 		txtDataE.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
@@ -169,12 +166,17 @@ public class ReservasView extends JFrame {
 			public void propertyChange(PropertyChangeEvent evt) {
 				//Ativa o evento, após o usuário selecionar as datas, o valor da reserva deve ser calculado
 				String nomePropriedade = evt.getPropertyName();
-				if("date".equals(nomePropriedade)) {
-					criarReservaTemporaria();
+				if("date".equals(nomePropriedade)){
+					if(datasValidas()) {
+						criarReservaTemporaria();
+					}  else {
+						JOptionPane.showMessageDialog(null, "Intervalo de datas inválido.");
+					}	
 				}
+				
 			}
 		});
-		txtDataS.setDateFormatString("yyyy-MM-dd");
+		txtDataS.setDateFormatString("dd 'de' MMMM 'de' yyyy");
 		txtDataS.getCalendarButton().setBackground(SystemColor.textHighlight);
 		txtDataS.setBorder(new LineBorder(new Color(255, 255, 255), 0));
 		panel.add(txtDataS);
@@ -208,7 +210,6 @@ public class ReservasView extends JFrame {
 		for(FormaPagamento fp:  formasPagamentos) {
 			txtFormaPagamento.addItem(fp);
 		}
-		//txtFormaPagamento.setModel(new DefaultComboBoxModel(new String[] {"Cartão de Crédito", "Cartão de Débito", "Dinheiro"}));
 		panel.add(txtFormaPagamento);
 		
 		JLabel lblFormaPago = new JLabel("FORMA DE PAGAMENTO");
@@ -330,7 +331,7 @@ public class ReservasView extends JFrame {
 		btnProximo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null) {
+				if (datasPreenchidas() && datasValidas()) {
 					reservar();
 					RegistroHospede registro = new RegistroHospede();
 					registro.setVisible(true);
@@ -374,12 +375,27 @@ public class ReservasView extends JFrame {
 	 }
 	
 	 private void criarReservaTemporaria() {
-		 LocalDate startDate = this.reservaController.convertDateToLocalDate(ReservasView.txtDataE.getDate());
-		 LocalDate endDate = this.reservaController.convertDateToLocalDate(ReservasView.txtDataS.getDate());
+		 LocalDate startDate = Conversor.convertDateToLocalDate(ReservasView.txtDataE.getDate());
+		 LocalDate endDate = Conversor.convertDateToLocalDate(ReservasView.txtDataS.getDate());
+		 
 		 this.reserva = new Reserva(startDate, endDate);
 		 FormaPagamento fp =  (FormaPagamento) ReservasView.txtFormaPagamento.getSelectedItem();
 		 this.reserva.setFormatoPagmentoId(fp.getId());
 		 ReservasView.txtValor.setText(String.valueOf(this.reserva.getValor()));
+	 }
+	 
+	 private Boolean datasPreenchidas(){
+		 Date startDate = ReservasView.txtDataE.getDate(); 
+		 Date endDate = ReservasView.txtDataS.getDate();
+		 return  startDate != null && endDate != null;
+	 }
+	 
+	 private Boolean datasValidas(){
+		
+		 Date startDate = ReservasView.txtDataE.getDate();
+		 Date endDate = ReservasView.txtDataS.getDate();
+		
+		 return  startDate.getTime() < endDate.getTime();
 	 }
 	 
 }
