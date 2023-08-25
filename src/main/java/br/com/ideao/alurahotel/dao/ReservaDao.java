@@ -23,7 +23,7 @@ public class ReservaDao {
 			pstmt.setString(1, reserva.getDataEntrada().toString());
 			pstmt.setString(2, reserva.getDataSaida().toString());
 			pstmt.setBigDecimal(3, reserva.getValor());
-			pstmt.setLong(4, reserva.getFormatoPagmentoId());
+			pstmt.setLong(4, reserva.getFormaPagmento().getId());
 			
 			pstmt.execute();
 			

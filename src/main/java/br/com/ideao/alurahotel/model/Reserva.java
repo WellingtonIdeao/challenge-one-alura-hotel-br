@@ -9,12 +9,17 @@ public class Reserva {
 	private LocalDate dataEntrada;
 	private LocalDate dataSaida;
 	private BigDecimal valor = BigDecimal.ZERO;
-	private Long formatoPagmentoId;
+	private FormaPagamento formaPagamento;
 	private BigDecimal taxa = BigDecimal.ZERO;
 	
-	public Reserva(LocalDate dataEntrada, LocalDate dataSaida) {
+	public Reserva(Long id, LocalDate dataEntrada, LocalDate dataSaida, FormaPagamento formaPagamento) {
+		this(dataEntrada, dataSaida, formaPagamento);
+		this.id = id;
+	}
+	public Reserva(LocalDate dataEntrada, LocalDate dataSaida, FormaPagamento formaPagamento) {
 		this.dataEntrada = dataEntrada;
 		this.dataSaida = dataSaida;
+		this.formaPagamento = formaPagamento;
 		this.taxa = new BigDecimal("200");
 		this.valor = calcularValor();
 	}
@@ -47,12 +52,12 @@ public class Reserva {
 		return this.dataSaida;
 	}
 	
-	public void setFormatoPagmentoId(Long formatoPagmentoId) {
-		this.formatoPagmentoId = formatoPagmentoId;
+	public void setFormatoPagmentoId(FormaPagamento formatoPagmento) {
+		this.formaPagamento = formatoPagmento;
 	}
 	
-	public Long getFormatoPagmentoId() {
-		return this.formatoPagmentoId;
+	public FormaPagamento getFormaPagmento() {
+		return this.formaPagamento;
 	}
 	
 	private BigDecimal calcularValor() {

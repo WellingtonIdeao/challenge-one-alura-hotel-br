@@ -12,8 +12,7 @@ public class FormaPagamentoController {
 	
 	public FormaPagamentoController() {
 		Connection connection = JdbcUtil.getConnection();
-		this.formaPagamentoDao = new FormaPagamentoDao(connection);
-		
+		this.formaPagamentoDao = new FormaPagamentoDao(connection);		
 	}
 	public List<FormaPagamento> listar(){
 		return this.formaPagamentoDao.listar();

@@ -129,7 +129,7 @@ public class ReservasView extends JFrame {
 			public void propertyChange(PropertyChangeEvent evt) {
 				String nomePropriedade = evt.getPropertyName();
 				if("date".equals(nomePropriedade)) {
-					criarReservaTemporaria();
+					atualizaDadosReserva();
 				}
 			}
 		});
@@ -168,7 +168,7 @@ public class ReservasView extends JFrame {
 				String nomePropriedade = evt.getPropertyName();
 				if("date".equals(nomePropriedade)){
 					if(datasValidas()) {
-						criarReservaTemporaria();
+						atualizaDadosReserva();
 					}  else {
 						JOptionPane.showMessageDialog(null, "Intervalo de datas inválido.");
 					}	
@@ -206,7 +206,7 @@ public class ReservasView extends JFrame {
 		txtFormaPagamento.setBorder(new LineBorder(new Color(255, 255, 255), 1, true));
 		txtFormaPagamento.setFont(new Font("Roboto", Font.PLAIN, 16));
 		
-		List<FormaPagamento> formasPagamentos = this.listar();
+		List<FormaPagamento> formasPagamentos = this.carregarFormasPagamentos();
 		for(FormaPagamento fp:  formasPagamentos) {
 			txtFormaPagamento.addItem(fp);
 		}
@@ -297,7 +297,7 @@ public class ReservasView extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				MenuUsuario menuUsuario = new MenuUsuario();
 				menuUsuario.setVisible(true);
-				dispose();				
+				dispose();
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -332,11 +332,12 @@ public class ReservasView extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (datasPreenchidas() && datasValidas()) {
-					reservar();
-					RegistroHospede registro = new RegistroHospede();
+					Reserva reserva = registrarReserva();
+					dispose();
+					RegistroHospede registro = new RegistroHospede(reserva);
 					registro.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "Deve preencher todos os campos.");
+					JOptionPane.showMessageDialog(null, "Por favor, preencha todos os campos.");
 				}
 			}						
 		});
@@ -366,21 +367,20 @@ public class ReservasView extends JFrame {
 	     this.setLocation(x - xMouse, y - yMouse);
 	 }
 	 
-	 private List<FormaPagamento> listar(){
+	 private List<FormaPagamento> carregarFormasPagamentos(){
 		 return this.formaPagamentoController.listar();
 	 }
 	 
-	 private void reservar() {
-		 this.reservaController.cadastrar(this.reserva);
+	 private Reserva registrarReserva() {
+		 return this.reservaController.cadastrar(this.reserva);
 	 }
 	
-	 private void criarReservaTemporaria() {
+	 private void atualizaDadosReserva() {
 		 LocalDate startDate = Conversor.convertDateToLocalDate(ReservasView.txtDataE.getDate());
 		 LocalDate endDate = Conversor.convertDateToLocalDate(ReservasView.txtDataS.getDate());
 		 
-		 this.reserva = new Reserva(startDate, endDate);
 		 FormaPagamento fp =  (FormaPagamento) ReservasView.txtFormaPagamento.getSelectedItem();
-		 this.reserva.setFormatoPagmentoId(fp.getId());
+		 this.reserva = new Reserva(startDate, endDate, fp);
 		 ReservasView.txtValor.setText(String.valueOf(this.reserva.getValor()));
 	 }
 	 

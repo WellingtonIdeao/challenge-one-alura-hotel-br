@@ -6,28 +6,28 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.ideao.alurahotel.model.FormaPagamento;
+import br.com.ideao.alurahotel.model.Nacionalidade;
 
-public class FormaPagamentoDao {
+public class NacionalidadeDao {
 	private Connection connection;
 	
-	public FormaPagamentoDao(Connection connection) {
+	public NacionalidadeDao(Connection connection) {
 		this.connection = connection;
 	}
 	
-	public List<FormaPagamento> listar(){
-		List<FormaPagamento> formasPagamentos = new ArrayList<>();
-		String sql = "SELECT F.id, F.nome FROM forma_pagamento F";
+	public List<Nacionalidade> listar(){
+		List<Nacionalidade> nacionalidades = new ArrayList<>();
+		String sql = "SELECT N.id, N.nome FROM nacionalidade N";
 		try(PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
 			pstmt.execute();
 			try (ResultSet rst = pstmt.getResultSet()) {
 				while(rst.next()) {
-					formasPagamentos.add(new FormaPagamento(rst.getLong(1),rst.getString(2)));
+					nacionalidades.add(new Nacionalidade(rst.getLong(1),rst.getString(2)));
 				}
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-		return formasPagamentos;
-	}
+		return nacionalidades;
+	}	
 }

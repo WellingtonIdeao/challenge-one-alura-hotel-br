@@ -7,9 +7,20 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
+
+import br.com.ideao.alurahotel.controller.HospedeController;
+import br.com.ideao.alurahotel.controller.NacionalidadeController;
+import br.com.ideao.alurahotel.model.FormaPagamento;
+import br.com.ideao.alurahotel.model.Hospede;
+import br.com.ideao.alurahotel.model.Nacionalidade;
+import br.com.ideao.alurahotel.model.Reserva;
+import br.com.ideao.alurahotel.utils.Conversor;
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.ImageIcon;
 import java.awt.SystemColor;
@@ -17,6 +28,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.text.Format;
+import java.time.LocalDate;
+import java.util.List;
 import java.awt.Toolkit;
 import javax.swing.SwingConstants;
 import javax.swing.JSeparator;
@@ -30,31 +43,35 @@ public class RegistroHospede extends JFrame {
 	private JTextField txtTelefone;
 	private JTextField txtNreserva;
 	private JDateChooser txtDataN;
-	private JComboBox<Format> txtNacionalidade;
+	private JComboBox<Nacionalidade> txtNacionalidade;
 	private JLabel labelExit;
 	private JLabel labelAtras;
 	int xMouse, yMouse;
+	private NacionalidadeController nacionalidadeController;
+	private HospedeController hospedeController;
+	private Hospede hospede;
+	private Reserva reserva;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					RegistroHospede frame = new RegistroHospede();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					RegistroHospede frame = new RegistroHospede(1l);
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
 	 */
-	public RegistroHospede() {
+	public RegistroHospede(Reserva reserva) {
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegistroHospede.class.getResource("/br/com/ideao/alurahotel/imagens/lOGO-50PX.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -66,6 +83,10 @@ public class RegistroHospede extends JFrame {
 		setLocationRelativeTo(null);
 		setUndecorated(true);
 		contentPane.setLayout(null);
+		
+		this.nacionalidadeController = new NacionalidadeController();
+		this.hospedeController = new HospedeController();
+		this.reserva = reserva;
 		
 		JPanel header = new JPanel();
 		header.setBounds(-54, 0, 910, 36);
@@ -174,11 +195,14 @@ public class RegistroHospede extends JFrame {
 		txtDataN.setDateFormatString("yyyy-MM-dd");
 		contentPane.add(txtDataN);
 		
-		txtNacionalidade = new JComboBox();
+		txtNacionalidade = new JComboBox<>();
 		txtNacionalidade.setBounds(560, 350, 289, 36);
 		txtNacionalidade.setBackground(SystemColor.text);
 		txtNacionalidade.setFont(new Font("Roboto", Font.PLAIN, 16));
-		txtNacionalidade.setModel(new DefaultComboBoxModel(new String[] {"alemão", "andorrano", "angolano", "antiguano", "saudita", "argelino", "argentino", "armênio", "australiano", "austríaco", "azerbaijano", "bahamense", "bangladês, bangladense", "barbadiano", "bahreinita", "belga", "belizenho", "beninês", "belarusso", "boliviano", "bósnio", "botsuanês", "brasileiro", "bruneíno", "búlgaro", "burkineonse, burkinabé", "burundês", "butanês", "cabo-verdiano", "camerounês", "cambojano", "catariano", "canadense", "cazaque", "chadiano", "chileno", "chinês", "cipriota", "colombiano", "comoriano", "congolês", "congolês", "sul-coreano", "norte-coreano", "costa-marfinense, marfinense", "costa-ricense", "croata", "cubano", "dinamarquês", "djiboutiano", "dominiquense", "egípcio", "salvadorenho", "emiradense, emirático", "equatoriano", "eritreu", "eslovaco", "esloveno", "espanhol", "estadunidense, (norte-)americano", "estoniano", "etíope", "fijiano", "filipino", "finlandês", "francês", "gabonês", "gambiano", "ganês ou ganense", "georgiano", "granadino", "grego", "guatemalteco", "guianês", "guineense", "guineense, bissau-guineense", "equato-guineense", "haitiano", "hondurenho", "húngaro", "iemenita", "cookiano", "marshallês", "salomonense", "indiano", "indonésio", "iraniano", "iraquiano", "irlandês", "islandês", "34", "jamaicano", "japonês", "jordaniano", "kiribatiano", "kuwaitiano", "laosiano", "lesotiano", "letão", "libanês", "liberiano", "líbio", "liechtensteiniano", "lituano", "luxemburguês", "macedônio", "madagascarense", "malásio37", "malawiano", "maldivo", "maliano", "maltês", "marroquino", "mauriciano", "mauritano", "mexicano", "myanmarense", "micronésio", "moçambicano", "moldovo", "monegasco", "mongol", "montenegrino", "namibiano", "nauruano", "nepalês", "nicaraguense", "nigerino", "nigeriano", "niuiano", "norueguês", "neozelandês", "omani", "neerlandês", "palauano", "palestino", "panamenho", "papua, papuásio", "paquistanês", "paraguaio", "peruano", "polonês, polaco", "português", "queniano", "quirguiz", "britânico", "centro-africano", "tcheco", "dominicano", "romeno", "ruandês", "russo", "samoano", "santa-lucense", "são-cristovense", "samarinês", "santomense", "são-vicentino", "seichelense", "senegalês", "sérvio", "singapurense", "sírio", "somaliano, somali", "sri-lankês", "suázi", "sudanês", "sul-sudanês", "sueco", "suíço", "surinamês", "tajique", "tailandês", "tanzaniano", "timorense", "togolês", "tonganês", "trinitário", "tunisiano", "turcomeno", "turco", "tuvaluano", "ucraniano", "ugandês", "uruguaio", "uzbeque", "vanuatuense", "vaticano", "venezuelano", "vietnamita", "zambiano", "zimbabueano"}));
+		List<Nacionalidade> nacionalidades = this.carregarNacionalidades();
+		for(Nacionalidade nc:  nacionalidades) {
+			txtNacionalidade.addItem(nc);
+		}
 		contentPane.add(txtNacionalidade);
 		
 		JLabel lblNome = new JLabel("NOME");
@@ -237,6 +261,7 @@ public class RegistroHospede extends JFrame {
 		txtNreserva.setColumns(10);
 		txtNreserva.setBackground(Color.WHITE);
 		txtNreserva.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+		txtNreserva.setText(String.valueOf(reserva.getId()));
 		contentPane.add(txtNreserva);
 		
 		JSeparator separator_1_2 = new JSeparator();
@@ -280,6 +305,15 @@ public class RegistroHospede extends JFrame {
 		btnsalvar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				if(camposValidos()) {
+					atualizaDadosHospede();
+					registrarHospede();
+					Sucesso janelaSucesso = new Sucesso();
+					janelaSucesso.setVisible(true);
+					dispose();
+				}else {
+					JOptionPane.showMessageDialog(null, "Por favor, preencha todos os campos.");
+				}
 			}
 		});
 		btnsalvar.setLayout(null);
@@ -312,7 +346,7 @@ public class RegistroHospede extends JFrame {
 	}
 	
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" y "y"
-	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
+		private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();
 	        yMouse = evt.getY();
 	    }
@@ -321,6 +355,22 @@ public class RegistroHospede extends JFrame {
 	        int x = evt.getXOnScreen();
 	        int y = evt.getYOnScreen();
 	        this.setLocation(x - xMouse, y - yMouse);
-}
-											
+	    }
+	    private List<Nacionalidade> carregarNacionalidades(){
+	    	return this.nacionalidadeController.listar();
+	    }
+	    
+	    private Boolean camposValidos() {
+	    	return this.txtNome.getText()!= null && this.txtSobrenome.getText() != null && this.txtDataN.getDate() != null;
+	    }
+	    
+	    private Hospede registrarHospede() {
+	    	return this.hospedeController.cadastrar(this.hospede);
+	    }
+	    
+	    private void atualizaDadosHospede() {
+	    	LocalDate date = Conversor.convertDateToLocalDate(this.txtDataN.getDate()); 
+	    	Nacionalidade nacionalidade = (Nacionalidade) this.txtNacionalidade.getSelectedItem();
+	    	this.hospede = new Hospede(this.txtNome.getText(), this.txtSobrenome.getText(), date, nacionalidade,this.txtTelefone.getText(), this.reserva);
+	    }    
 }
