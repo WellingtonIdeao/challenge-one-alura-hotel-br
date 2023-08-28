@@ -334,6 +334,7 @@ public class ReservasView extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (validarDatas(txtDataE.getDate(), txtDataS.getDate()) && !txtValor.getText().isEmpty()) {
+					atualizaDadosReserva();
 					Reserva reserva = registrarReserva();
 					RegistroHospede registro = new RegistroHospede(reserva);
 					registro.setVisible(true);

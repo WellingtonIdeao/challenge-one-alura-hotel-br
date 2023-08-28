@@ -5,7 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 
+
+import br.com.ideao.alurahotel.model.FormaPagamento;
 import br.com.ideao.alurahotel.model.Reserva;
 
 public class ReservaDao {
@@ -30,6 +33,33 @@ public class ReservaDao {
 			try(ResultSet rst = pstmt.getGeneratedKeys()){
 				while(rst.next()) {
 					reserva.setId(rst.getLong(1));
+				}
+			}		
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		return reserva;	
+	}
+
+	public Reserva buscarPorId(Long id) {
+	
+		String sql = "SELECT R.id, R.data_entrada, R.data_saida, R.valor, F.id, F.nome FROM reserva R INNER JOIN "
+		+" forma_pagamento F ON  F.id = R.forma_pagamento_id WHERE R.id = ?";
+		
+		Reserva reserva = null;
+		
+		try(PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
+			pstmt.setLong(1, id);
+			pstmt.execute();
+			
+			try(ResultSet rst = pstmt.getResultSet()){
+				while(rst.next()) {
+					FormaPagamento fp = new FormaPagamento(rst.getLong(5), rst.getString(6));
+					
+					LocalDate data_entrada = rst.getDate(2).toLocalDate();
+					LocalDate data_saida = rst.getDate(3).toLocalDate();
+					
+					reserva = new Reserva(rst.getLong(1), data_entrada, data_saida, fp);
 				}
 			}		
 		} catch (SQLException e) {

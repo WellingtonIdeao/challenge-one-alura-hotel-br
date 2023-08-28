@@ -6,6 +6,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import br.com.ideao.alurahotel.controller.ReservaController;
+import br.com.ideao.alurahotel.model.Reserva;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ImageIcon;
@@ -21,6 +25,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
+
 @SuppressWarnings("serial")
 public class Buscar extends JFrame {
 
@@ -32,6 +37,7 @@ public class Buscar extends JFrame {
 	private DefaultTableModel modeloHospedes;
 	private JLabel labelAtras;
 	private JLabel labelExit;
+	private ReservaController reservaController;
 	int xMouse, yMouse;
 
 	/**
@@ -64,6 +70,8 @@ public class Buscar extends JFrame {
 		contentPane.setLayout(null);
 		setLocationRelativeTo(null);
 		setUndecorated(true);
+		
+		this.reservaController = new ReservaController();
 		
 		txtBuscar = new JTextField();
 		txtBuscar.setBounds(536, 127, 193, 31);
@@ -208,7 +216,13 @@ public class Buscar extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				try {
+					Long id = Long.valueOf(txtBuscar.getText());
+					Reserva reserva = reservaController.buscarPorId(id);
+					preencherTabela(reserva);
+				} catch(Exception ex) {
+					limparTabela(modelo);
+				}
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -260,9 +274,22 @@ public class Buscar extends JFrame {
 	        yMouse = evt.getY();
 	    }
 
-	    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
-	        int x = evt.getXOnScreen();
-	        int y = evt.getYOnScreen();
-	        this.setLocation(x - xMouse, y - yMouse);
-}
+	 private void headerMouseDragged(java.awt.event.MouseEvent evt) {
+		 int x = evt.getXOnScreen();
+	     int y = evt.getYOnScreen();
+	     this.setLocation(x - xMouse, y - yMouse);
+	 }
+	    
+	 private void preencherTabela(Reserva reserva) {
+		try {
+			modelo.addRow(new Object[] { reserva.getId(), reserva.getDataEntrada(), reserva.getDataSaida(), reserva.getValor(), reserva.getFormaPagmento().getNome()});	
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	 }
+	 
+	 private void limparTabela(DefaultTableModel tableModel) {
+		 tableModel.getDataVector().clear();
+		 tableModel.fireTableDataChanged();
+	 }
 }
