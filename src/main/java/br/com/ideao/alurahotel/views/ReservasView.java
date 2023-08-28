@@ -114,7 +114,6 @@ public class ReservasView extends JFrame {
 		panel.add(separator_1_1);
 		
 		txtDataE = new JDateChooser();
-		txtDataE.setDate(java.sql.Date.valueOf(LocalDate.now()));
 		txtDataE.getCalendarButton().setBackground(SystemColor.textHighlight);
 		txtDataE.getCalendarButton().setIcon(new ImageIcon(ReservasView.class.getResource("/br/com/ideao/alurahotel/imagens/icon-reservas.png")));
 		txtDataE.getCalendarButton().setFont(new Font("Roboto", Font.PLAIN, 12));
@@ -128,11 +127,14 @@ public class ReservasView extends JFrame {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				String nomePropriedade = evt.getPropertyName();
-				if("date".equals(nomePropriedade)) {
-					atualizaDadosReserva();
+				if("date".equals(nomePropriedade)){
+					if(txtDataS.getDate() != null){
+						txtValor.setText("");
+					}
 				}
 			}
 		});
+		
 		panel.add(txtDataE);
 		
 		lblValorSimbolo = new JLabel("$");
@@ -167,13 +169,13 @@ public class ReservasView extends JFrame {
 				//Ativa o evento, após o usuário selecionar as datas, o valor da reserva deve ser calculado
 				String nomePropriedade = evt.getPropertyName();
 				if("date".equals(nomePropriedade)){
-					if(datasValidas()) {
+					if(validarDatas(txtDataE.getDate(), txtDataS.getDate())) {
 						atualizaDadosReserva();
-					}  else {
-						JOptionPane.showMessageDialog(null, "Intervalo de datas inválido.");
-					}	
+					} else {
+						JOptionPane.showMessageDialog(null, "Intervalo de datas inválida, por favor, preencha as datas novamente");
+						txtValor.setText("");
+					}
 				}
-				
 			}
 		});
 		txtDataS.setDateFormatString("dd 'de' MMMM 'de' yyyy");
@@ -331,11 +333,11 @@ public class ReservasView extends JFrame {
 		btnProximo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (datasPreenchidas() && datasValidas()) {
+				if (validarDatas(txtDataE.getDate(), txtDataS.getDate()) && !txtValor.getText().isEmpty()) {
 					Reserva reserva = registrarReserva();
-					dispose();
 					RegistroHospede registro = new RegistroHospede(reserva);
 					registro.setVisible(true);
+					dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "Por favor, preencha todos os campos.");
 				}
@@ -384,17 +386,28 @@ public class ReservasView extends JFrame {
 		 ReservasView.txtValor.setText(String.valueOf(this.reserva.getValor()));
 	 }
 	 
-	 private Boolean datasPreenchidas(){
-		 Date startDate = ReservasView.txtDataE.getDate(); 
-		 Date endDate = ReservasView.txtDataS.getDate();
+	 private Boolean datasPreenchidas(Date startDate, Date endDate){
 		 return  startDate != null && endDate != null;
 	 }
 	 
-	 private Boolean datasValidas(){
-		
-		 Date startDate = ReservasView.txtDataE.getDate();
-		 Date endDate = ReservasView.txtDataS.getDate();
-		
-		 return  startDate.getTime() < endDate.getTime();
-	 }	 
+	 private Boolean dataComecaDeHoje(LocalDate startDate, LocalDate endDate) {
+		 
+		 LocalDate now = LocalDate.now();
+		 return startDate.compareTo(now) >= 0 && endDate.compareTo(now) >= 0 ;
+	 }
+	 
+	 private Boolean dataEntradaMenorDataSaida(LocalDate startDate, LocalDate endDate) {
+		 return startDate.compareTo(endDate) <= 0;
+	 }
+	 
+	 private Boolean validarDatas(Date startDate, Date endDate){
+		 
+		 if(!datasPreenchidas(startDate, endDate)) {
+			 return false;
+		 }
+		 LocalDate LocalStartDate = Conversor.convertDateToLocalDate(startDate);
+		 LocalDate LocalEndDate = Conversor.convertDateToLocalDate(endDate);
+
+		 return dataComecaDeHoje(LocalStartDate, LocalEndDate) && dataEntradaMenorDataSaida(LocalStartDate, LocalEndDate); 
+	 }
 }

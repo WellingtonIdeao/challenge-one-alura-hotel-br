@@ -1,6 +1,5 @@
 package br.com.ideao.alurahotel.views;
 
-import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -10,14 +9,12 @@ import com.toedter.calendar.JDateChooser;
 
 import br.com.ideao.alurahotel.controller.HospedeController;
 import br.com.ideao.alurahotel.controller.NacionalidadeController;
-import br.com.ideao.alurahotel.model.FormaPagamento;
 import br.com.ideao.alurahotel.model.Hospede;
 import br.com.ideao.alurahotel.model.Nacionalidade;
 import br.com.ideao.alurahotel.model.Reserva;
 import br.com.ideao.alurahotel.utils.Conversor;
 
 import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -27,7 +24,6 @@ import java.awt.SystemColor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.text.Format;
 import java.time.LocalDate;
 import java.util.List;
 import java.awt.Toolkit;
