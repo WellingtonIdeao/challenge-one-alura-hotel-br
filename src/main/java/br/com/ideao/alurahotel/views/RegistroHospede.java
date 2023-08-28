@@ -5,6 +5,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import java.awt.Color;
+import java.awt.EventQueue;
+
 import com.toedter.calendar.JDateChooser;
 
 import br.com.ideao.alurahotel.controller.HospedeController;
@@ -26,6 +28,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.awt.Toolkit;
 import javax.swing.SwingConstants;
 import javax.swing.JSeparator;
@@ -51,18 +55,18 @@ public class RegistroHospede extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					RegistroHospede frame = new RegistroHospede(1l);
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					RegistroHospede frame = new RegistroHospede(new Reserva(1l, LocalDate.now(), LocalDate.now(), null));
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Create the frame.
@@ -357,7 +361,8 @@ public class RegistroHospede extends JFrame {
 	    }
 	    
 	    private Boolean camposValidos() {
-	    	return this.txtNome.getText()!= null && this.txtSobrenome.getText() != null && this.txtDataN.getDate() != null;
+	    	return this.txtNome.getText()!= null && this.txtSobrenome.getText()
+	    			!= null && validarDataNasc() && validarTelefone(txtTelefone.getText());
 	    }
 	    
 	    private Hospede registrarHospede() {
@@ -368,5 +373,22 @@ public class RegistroHospede extends JFrame {
 	    	LocalDate date = Conversor.convertDateToLocalDate(this.txtDataN.getDate()); 
 	    	Nacionalidade nacionalidade = (Nacionalidade) this.txtNacionalidade.getSelectedItem();
 	    	this.hospede = new Hospede(this.txtNome.getText(), this.txtSobrenome.getText(), date, nacionalidade,this.txtTelefone.getText(), this.reserva);
-	    }    
+	    }
+	    
+	    private Boolean validarTelefone(String telefone) {
+	    	String regex = "^9?\\d{8}$";
+	    	Pattern pattern = Pattern.compile(regex);
+	    	Matcher  matcher = pattern.matcher(telefone);
+	    	return matcher.matches();
+	    }
+	    
+	    private Boolean validarDataNasc() {
+	    	
+	    	if(txtDataN == null) {
+	    		return false;
+	    	}
+	    	LocalDate today = LocalDate.now();
+	    	LocalDate date = Conversor.convertDateToLocalDate(txtDataN.getDate());
+	    	return  date.compareTo(today) < 0;
+	    }
 }
