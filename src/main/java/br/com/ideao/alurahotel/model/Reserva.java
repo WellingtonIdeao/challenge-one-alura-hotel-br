@@ -12,6 +12,10 @@ public class Reserva {
 	private FormaPagamento formaPagamento;
 	private BigDecimal taxa = BigDecimal.ZERO;
 	
+	public Reserva() {
+		super();
+	}
+	
 	public Reserva(Long id, LocalDate dataEntrada, LocalDate dataSaida, FormaPagamento formaPagamento) {
 		this(dataEntrada, dataSaida, formaPagamento);
 		this.id = id;

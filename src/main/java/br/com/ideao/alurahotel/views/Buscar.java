@@ -7,7 +7,9 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import br.com.ideao.alurahotel.controller.HospedeController;
 import br.com.ideao.alurahotel.controller.ReservaController;
+import br.com.ideao.alurahotel.model.Hospede;
 import br.com.ideao.alurahotel.model.Reserva;
 
 import javax.swing.JTable;
@@ -24,6 +26,7 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.List;
 
 
 @SuppressWarnings("serial")
@@ -38,6 +41,7 @@ public class Buscar extends JFrame {
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	private ReservaController reservaController;
+	private HospedeController hospedeController;
 	int xMouse, yMouse;
 
 	/**
@@ -72,6 +76,7 @@ public class Buscar extends JFrame {
 		setUndecorated(true);
 		
 		this.reservaController = new ReservaController();
+		this.hospedeController = new HospedeController();
 		
 		txtBuscar = new JTextField();
 		txtBuscar.setBounds(536, 127, 193, 31);
@@ -100,7 +105,7 @@ public class Buscar extends JFrame {
 		modelo.addColumn("Data Check In");
 		modelo.addColumn("Data Check Out");
 		modelo.addColumn("Valor");
-		modelo.addColumn("Forma de Pago");
+		modelo.addColumn("Forma de Paga");
 		JScrollPane scroll_table = new JScrollPane(tbReservas);
 		panel.addTab("Reservas", new ImageIcon(Buscar.class.getResource("/br/com/ideao/alurahotel/imagens/reservado.png")), scroll_table, null);
 		scroll_table.setVisible(true);
@@ -216,12 +221,19 @@ public class Buscar extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				try {
-					Long id = Long.valueOf(txtBuscar.getText());
-					Reserva reserva = reservaController.buscarPorId(id);
-					preencherTabela(reserva);
-				} catch(Exception ex) {
-					limparTabela(modelo);
+				if(panel.getSelectedIndex() == 0) {
+					try {
+						Long id = Long.valueOf(txtBuscar.getText());
+						Reserva reserva = reservaController.buscarPorId(id);
+						preencherTabela(reserva);
+					} catch(Exception ex) {
+						limparTabela(modelo);
+					}
+				}
+				if(panel.getSelectedIndex() == 1) {
+					limparTabela(modeloHospedes);
+					List<Hospede> hospedes = hospedeController.buscarPorSobreNome(txtBuscar.getText());
+					preencherTabela(hospedes);
 				}
 			}
 		});
@@ -288,6 +300,20 @@ public class Buscar extends JFrame {
 		}
 	 }
 	 
+	 private void preencherTabela(List<Hospede> hospedes) {
+			try {
+				for(Hospede hospede: hospedes) {
+					modeloHospedes.addRow(new Object[]{
+							hospede.getId(), hospede.getNome(), hospede.getSobreNome(),
+							hospede.getDataNascimento(), hospede.getNacionalidade().getNome(),
+							hospede.getTelefone(), hospede.getReserva().getId()
+					});	
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		 }
+		 
 	 private void limparTabela(DefaultTableModel tableModel) {
 		 tableModel.getDataVector().clear();
 		 tableModel.fireTableDataChanged();
