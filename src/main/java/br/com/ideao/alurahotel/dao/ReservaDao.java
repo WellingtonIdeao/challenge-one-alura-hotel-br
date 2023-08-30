@@ -67,4 +67,20 @@ public class ReservaDao {
 		}
 		return reserva;	
 	}
+
+	public void alterar(Reserva reserva) {
+		String sql = "UPDATE reserva SET data_entrada = ?, data_saida = ?, valor = ?, forma_pagamento_id = ? WHERE id = ?";
+		try (PreparedStatement pstmt = this.connection.prepareStatement(sql)){
+			pstmt.setString(1, reserva.getDataEntrada().toString());
+			pstmt.setString(2, reserva.getDataSaida().toString());
+			pstmt.setBigDecimal(3, reserva.getValor());
+			pstmt.setLong(4, reserva.getFormaPagmento().getId());
+			pstmt.setLong(5, reserva.getId());
+			
+			pstmt.execute();
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

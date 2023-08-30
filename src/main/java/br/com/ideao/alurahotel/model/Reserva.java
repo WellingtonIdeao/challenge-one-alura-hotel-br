@@ -71,4 +71,9 @@ public class Reserva {
 		return ChronoUnit.DAYS.between(this.dataEntrada, this.dataSaida.plusDays(1));
 	}
 
+	public void setValor(BigDecimal aValue) {
+		this.valor = aValue;
+		
+	}
+
 }

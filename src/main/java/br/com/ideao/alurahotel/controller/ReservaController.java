@@ -22,4 +22,8 @@ public class ReservaController {
 	public Reserva buscarPorId(Long id){
 		return this.reservaDao.buscarPorId(id);
 	}
+
+	public void alterar(Reserva reserva) {
+		this.reservaDao.alterar(reserva);
+	}
 }

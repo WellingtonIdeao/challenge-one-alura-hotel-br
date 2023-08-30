@@ -7,16 +7,23 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import br.com.ideao.alurahotel.controller.FormaPagamentoController;
 import br.com.ideao.alurahotel.controller.HospedeController;
 import br.com.ideao.alurahotel.controller.ReservaController;
+import br.com.ideao.alurahotel.model.FormaPagamento;
 import br.com.ideao.alurahotel.model.Hospede;
 import br.com.ideao.alurahotel.model.Reserva;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
@@ -26,7 +33,11 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+
+import com.github.lgooddatepicker.tableeditors.DateTableEditor;
 
 
 @SuppressWarnings("serial")
@@ -36,7 +47,7 @@ public class Buscar extends JFrame {
 	private JTextField txtBuscar;
 	private JTable tbHospedes;
 	private JTable tbReservas;
-	private DefaultTableModel modelo;
+	private ReservaTableModel modeloReserva;
 	private DefaultTableModel modeloHospedes;
 	private JLabel labelAtras;
 	private JLabel labelExit;
@@ -96,16 +107,24 @@ public class Buscar extends JFrame {
 		panel.setFont(new Font("Roboto", Font.PLAIN, 16));
 		panel.setBounds(20, 169, 865, 328);
 		contentPane.add(panel);
-				
-		tbReservas = new JTable();
+		
+		JComboBox<FormaPagamento> comboBoxFormaPagamento = new JComboBox<>();
+		FormaPagamentoController fpc = new FormaPagamentoController();
+		
+		List<FormaPagamento> formasPagamentos = fpc.listar();
+		for(FormaPagamento fp:  formasPagamentos) {
+			comboBoxFormaPagamento.addItem(fp);
+		}
+		
+		tbReservas = new JTable(new ReservaTableModel());
 		tbReservas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbReservas.setFont(new Font("Roboto", Font.PLAIN, 16));
-		modelo = (DefaultTableModel) tbReservas.getModel();
-		modelo.addColumn("Numero de Reserva");
-		modelo.addColumn("Data Check In");
-		modelo.addColumn("Data Check Out");
-		modelo.addColumn("Valor");
-		modelo.addColumn("Forma de Paga");
+
+		tbReservas.setDefaultEditor(LocalDate.class, new DateTableEditor());
+		tbReservas.setDefaultRenderer(LocalDate.class,new DateTableEditor());
+		tbReservas.setDefaultEditor(FormaPagamento.class, new DefaultCellEditor(comboBoxFormaPagamento));
+		modeloReserva = (ReservaTableModel) tbReservas.getModel();
+
 		JScrollPane scroll_table = new JScrollPane(tbReservas);
 		panel.addTab("Reservas", new ImageIcon(Buscar.class.getResource("/br/com/ideao/alurahotel/imagens/reservado.png")), scroll_table, null);
 		scroll_table.setVisible(true);
@@ -223,18 +242,22 @@ public class Buscar extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if(panel.getSelectedIndex() == 0) {
 					try {
-						Long id = Long.valueOf(txtBuscar.getText());
-						Reserva reserva = reservaController.buscarPorId(id);
-						preencherTabela(reserva);
+						Long id = Long.parseLong(txtBuscar.getText());
+						Reserva reserva = buscarReserva(id);
+						if(reserva == null) {
+							JOptionPane.showMessageDialog(null, "Reserva não encontrada");
+							limparTabela(modeloReserva);
+						}else
+							preencherTabela(reserva);
 					} catch(Exception ex) {
-						limparTabela(modelo);
+						limparTabela(modeloReserva);
 					}
 				}
-				if(panel.getSelectedIndex() == 1) {
-					limparTabela(modeloHospedes);
-					List<Hospede> hospedes = hospedeController.buscarPorSobreNome(txtBuscar.getText());
-					preencherTabela(hospedes);
-				}
+//				if(panel.getSelectedIndex() == 1) {
+//					limparTabela(modeloHospedes);
+//					List<Hospede> hospedes = hospedeController.buscarPorSobreNome(txtBuscar.getText());
+//					preencherTabela(hospedes);
+//				}
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -256,6 +279,19 @@ public class Buscar extends JFrame {
 		btnEditar.setBounds(635, 508, 122, 35);
 		btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnEditar);
+		btnEditar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(panel.getSelectedIndex() == 0) {
+						Reserva reserva = alterar();
+						if (reserva!=null) {
+							limparTabela(modeloReserva);
+							reserva = buscarReserva(reserva.getId());
+							preencherTabela(reserva);
+						}
+				}		
+			}
+		});
 		
 		JLabel lblEditar = new JLabel("EDITAR");
 		lblEditar.setHorizontalAlignment(SwingConstants.CENTER);
@@ -280,6 +316,34 @@ public class Buscar extends JFrame {
 		setResizable(false);
 	}
 	
+	private Reserva alterar() {
+		Reserva reserva = null;
+		try {
+			Object objetoLinha = (Object) modeloReserva.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn());
+			if (objetoLinha instanceof Long) {
+				Long id = (Long) objetoLinha;
+				LocalDate data_entrada = (LocalDate)modeloReserva.getValueAt(tbReservas.getSelectedRow(), 1);
+				LocalDate data_saida = (LocalDate)modeloReserva.getValueAt(tbReservas.getSelectedRow(), 2);
+				BigDecimal valor = (BigDecimal)modeloReserva.getValueAt(tbReservas.getSelectedRow(), 3);
+				FormaPagamento fp = (FormaPagamento) modeloReserva.getValueAt(tbReservas.getSelectedRow(), 4);
+				System.out.println("id = "+ id +", data_entrada = "+data_entrada
+						+", data_saida = "+data_saida+", valor = "+valor+", forma_pagamento = "+fp);
+				
+				reserva  = new Reserva(id, data_entrada, data_saida, fp);
+				if(dataComecaDeHoje(data_entrada, data_saida) && dataEntradaMenorDataSaida(data_entrada, data_saida)) {
+					this.reservaController.alterar(reserva);
+				}else {
+					JOptionPane.showMessageDialog(null, "Por favor, coloque datas válidas");
+				}	
+			} else {
+				JOptionPane.showMessageDialog(null, "Por favor, selecionar o ID");
+			}
+		} catch( RuntimeException e) {
+			JOptionPane.showMessageDialog(null, "Por favor, selecionar o ID");
+		}
+		return reserva;
+	}
+
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();
@@ -293,11 +357,11 @@ public class Buscar extends JFrame {
 	 }
 	    
 	 private void preencherTabela(Reserva reserva) {
-		try {
-			modelo.addRow(new Object[] { reserva.getId(), reserva.getDataEntrada(), reserva.getDataSaida(), reserva.getValor(), reserva.getFormaPagmento().getNome()});	
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+			try {
+				modeloReserva.addRow(reserva);	
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 	 }
 	 
 	 private void preencherTabela(List<Hospede> hospedes) {
@@ -312,10 +376,23 @@ public class Buscar extends JFrame {
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-		 }
+	 }
 		 
-	 private void limparTabela(DefaultTableModel tableModel) {
-		 tableModel.getDataVector().clear();
-		 tableModel.fireTableDataChanged();
+	 private void limparTabela(ReservaTableModel tableModel) {
+		 tableModel.clear();
+	 }
+	 private Reserva buscarReserva(Long id) {
+		 	Long.parseLong(txtBuscar.getText());
+		 	return reservaController.buscarPorId(id);
+	 }
+	 
+	 private Boolean dataComecaDeHoje(LocalDate startDate, LocalDate endDate) {
+		 
+		 LocalDate now = LocalDate.now();
+		 return startDate.compareTo(now) >= 0 && endDate.compareTo(now) >= 0 ;
+	 }
+	 
+	 private Boolean dataEntradaMenorDataSaida(LocalDate startDate, LocalDate endDate) {
+		 return startDate.compareTo(endDate) <= 0;
 	 }
 }
