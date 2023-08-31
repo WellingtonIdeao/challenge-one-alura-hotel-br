@@ -5,13 +5,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 
 import br.com.ideao.alurahotel.controller.FormaPagamentoController;
 import br.com.ideao.alurahotel.controller.HospedeController;
+import br.com.ideao.alurahotel.controller.NacionalidadeController;
 import br.com.ideao.alurahotel.controller.ReservaController;
 import br.com.ideao.alurahotel.model.FormaPagamento;
 import br.com.ideao.alurahotel.model.Hospede;
+import br.com.ideao.alurahotel.model.Nacionalidade;
 import br.com.ideao.alurahotel.model.Reserva;
 
 import javax.swing.JTable;
@@ -48,7 +49,7 @@ public class Buscar extends JFrame {
 	private JTable tbHospedes;
 	private JTable tbReservas;
 	private ReservaTableModel modeloReserva;
-	private DefaultTableModel modeloHospedes;
+	private HospedeTableModel modeloHospedes;
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	private ReservaController reservaController;
@@ -109,11 +110,19 @@ public class Buscar extends JFrame {
 		contentPane.add(panel);
 		
 		JComboBox<FormaPagamento> comboBoxFormaPagamento = new JComboBox<>();
+		JComboBox<Nacionalidade> comboBoxNacionalidade = new JComboBox<>();
+		
 		FormaPagamentoController fpc = new FormaPagamentoController();
+		NacionalidadeController ncc = new NacionalidadeController();
 		
 		List<FormaPagamento> formasPagamentos = fpc.listar();
+		List<Nacionalidade> nacionalidades = ncc.listar();
+		
 		for(FormaPagamento fp:  formasPagamentos) {
 			comboBoxFormaPagamento.addItem(fp);
+		}
+		for(Nacionalidade nc:  nacionalidades) {
+			comboBoxNacionalidade.addItem(nc);
 		}
 		
 		tbReservas = new JTable(new ReservaTableModel());
@@ -130,17 +139,14 @@ public class Buscar extends JFrame {
 		scroll_table.setVisible(true);
 		
 		
-		tbHospedes = new JTable();
+		tbHospedes = new JTable(new HospedeTableModel());
 		tbHospedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbHospedes.setFont(new Font("Roboto", Font.PLAIN, 16));
-		modeloHospedes = (DefaultTableModel) tbHospedes.getModel();
-		modeloHospedes.addColumn("Numero de Hóspede");
-		modeloHospedes.addColumn("Nome");
-		modeloHospedes.addColumn("Sobrenome");
-		modeloHospedes.addColumn("Data de Nascimento");
-		modeloHospedes.addColumn("Nacionalidade");
-		modeloHospedes.addColumn("Telefone");
-		modeloHospedes.addColumn("Numero de Reserva");
+		tbHospedes.setDefaultEditor(LocalDate.class, new DateTableEditor());
+		tbHospedes.setDefaultRenderer(LocalDate.class, new DateTableEditor());
+		tbHospedes.setDefaultEditor(Nacionalidade.class, new DefaultCellEditor(comboBoxNacionalidade));
+		modeloHospedes = (HospedeTableModel) tbHospedes.getModel();
+		
 		JScrollPane scroll_tableHuespedes = new JScrollPane(tbHospedes);
 		panel.addTab("Hóspedes", new ImageIcon(Buscar.class.getResource("/br/com/ideao/alurahotel/imagens/pessoas.png")), scroll_tableHuespedes, null);
 		scroll_tableHuespedes.setVisible(true);
@@ -246,19 +252,29 @@ public class Buscar extends JFrame {
 						Reserva reserva = buscarReserva(id);
 						if(reserva == null) {
 							JOptionPane.showMessageDialog(null, "Reserva não encontrada");
-							limparTabela(modeloReserva);
+							limparTabelaReserva(modeloReserva);
 						}else
 							preencherTabela(reserva);
 					} catch(Exception ex) {
-						limparTabela(modeloReserva);
+						limparTabelaReserva(modeloReserva);
 					}
 				}
-//				if(panel.getSelectedIndex() == 1) {
-//					limparTabela(modeloHospedes);
-//					List<Hospede> hospedes = hospedeController.buscarPorSobreNome(txtBuscar.getText());
-//					preencherTabela(hospedes);
-//				}
+				if(panel.getSelectedIndex() == 1) {
+					
+					if(txtBuscar.getText().isBlank()) {
+						limparTabelaHospede(modeloHospedes);
+						return;
+					}
+					List<Hospede> hospedes = hospedeController.buscarPorSobreNome(txtBuscar.getText());
+					if(hospedes.isEmpty()){
+						JOptionPane.showMessageDialog(null, "Hóspede não encontrado");
+					}else {
+						limparTabelaHospede(modeloHospedes);
+						preencherTabela(hospedes);
+					}
+				}
 			}
+
 		});
 		btnbuscar.setLayout(null);
 		btnbuscar.setBackground(new Color(12, 138, 199));
@@ -283,13 +299,18 @@ public class Buscar extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(panel.getSelectedIndex() == 0) {
-						Reserva reserva = alterar();
+						Reserva reserva = alterarReserva();
 						if (reserva!=null) {
-							limparTabela(modeloReserva);
+							limparTabelaReserva(modeloReserva);
 							reserva = buscarReserva(reserva.getId());
 							preencherTabela(reserva);
 						}
-				}		
+				}
+				if(panel.getSelectedIndex() == 1) {
+					alterarHospede();
+					limparTabelaHospede(modeloHospedes);
+					preencherTabela(hospedeController.buscarPorSobreNome(txtBuscar.getText()));
+				}
 			}
 		});
 		
@@ -316,7 +337,32 @@ public class Buscar extends JFrame {
 		setResizable(false);
 	}
 	
-	private Reserva alterar() {
+	private void alterarHospede() {
+		try {
+			Object objetoLinha = (Object) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), tbHospedes.getSelectedColumn());
+			if (objetoLinha instanceof Long) {
+				Long id = (Long) objetoLinha;
+				String nome = (String) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), 1);
+				String sobreNome = (String) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), 2);
+				LocalDate data_nasc = (LocalDate) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), 3);
+				Nacionalidade nacionalidade = (Nacionalidade) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), 4);
+				String telefone = (String) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), 5);
+				Reserva reserva = (Reserva) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), 6);
+				
+				System.out.println("id = "+ id +", nome = "+nome + ", sobrenome = "+sobreNome + ", data_nasc = "+ data_nasc
+						+", nacionalidade = "+nacionalidade+", telefone = "+telefone+", reserva = "+reserva);
+				
+				Hospede hospede = new Hospede(id, nome, sobreNome, data_nasc, nacionalidade, telefone, reserva);
+				this.hospedeController.alterar(hospede);	
+			} else {
+				JOptionPane.showMessageDialog(null, "Por favor, selecionar o ID");
+			}
+		} catch( RuntimeException e) {
+			JOptionPane.showMessageDialog(null, "Por favor, selecionar o ID");
+		}
+	}
+	
+	private Reserva alterarReserva() {
 		Reserva reserva = null;
 		try {
 			Object objetoLinha = (Object) modeloReserva.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn());
@@ -367,18 +413,18 @@ public class Buscar extends JFrame {
 	 private void preencherTabela(List<Hospede> hospedes) {
 			try {
 				for(Hospede hospede: hospedes) {
-					modeloHospedes.addRow(new Object[]{
-							hospede.getId(), hospede.getNome(), hospede.getSobreNome(),
-							hospede.getDataNascimento(), hospede.getNacionalidade().getNome(),
-							hospede.getTelefone(), hospede.getReserva().getId()
-					});	
+					modeloHospedes.addRow(hospede);	
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 	 }
 		 
-	 private void limparTabela(ReservaTableModel tableModel) {
+	 private void limparTabelaReserva(ReservaTableModel tableModel) {
+		 tableModel.clear();
+	 }
+	 
+	 private void limparTabelaHospede(HospedeTableModel tableModel) {
 		 tableModel.clear();
 	 }
 	 private Reserva buscarReserva(Long id) {

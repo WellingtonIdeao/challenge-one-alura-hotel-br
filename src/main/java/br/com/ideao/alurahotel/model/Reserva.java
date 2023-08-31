@@ -73,7 +73,11 @@ public class Reserva {
 
 	public void setValor(BigDecimal aValue) {
 		this.valor = aValue;
-		
+	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(this.id);
 	}
 
 }

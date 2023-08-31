@@ -68,5 +68,25 @@ public class HospedeDao {
 			throw new RuntimeException();
 		}
 		return hospedes;
+	}
+
+	public void alterar(Hospede hospede) {
+		String sql = "UPDATE hospede SET nome = ?, sobrenome = ?, nacionalidade_id = ?,"
+				+ " telefone = ?, data_nascimento = ?, reserva_id = ? WHERE id = ?";
+		
+		try (PreparedStatement pstmt = this.connection.prepareStatement(sql)){
+			pstmt.setString(1, hospede.getNome());
+			pstmt.setString(2, hospede.getSobreNome());
+			pstmt.setLong(3, hospede.getNacionalidade().getId());
+			pstmt.setString(4, hospede.getTelefone());
+			pstmt.setString(5, hospede.getDataNascimento().toString());
+			pstmt.setLong(6, hospede.getReserva().getId());
+			pstmt.setLong(7, hospede.getId());
+			
+			pstmt.execute();
+			
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}	
 }

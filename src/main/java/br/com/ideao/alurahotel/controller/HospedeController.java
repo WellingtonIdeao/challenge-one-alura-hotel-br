@@ -22,4 +22,9 @@ public class HospedeController {
 	public List<Hospede> buscarPorSobreNome(String sobreNome){
 		return this.hospedeDao.buscarPorSobreNome(sobreNome);
 	}
+
+	public void alterar(Hospede hospede) {
+		this.hospedeDao.alterar(hospede);
+		
+	}
 }
