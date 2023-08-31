@@ -1,6 +1,7 @@
 package br.com.ideao.alurahotel.controller;
 
 import java.sql.Connection;
+import java.util.List;
 
 import br.com.ideao.alurahotel.dao.ReservaDao;
 import br.com.ideao.alurahotel.model.Reserva;
@@ -19,7 +20,7 @@ public class ReservaController {
 		return this.reservaDao.cadastrar(reserva);
 	}
 	
-	public Reserva buscarPorId(Long id){
+	public List<Reserva> buscarPorId(Long id){
 		return this.reservaDao.buscarPorId(id);
 	}
 

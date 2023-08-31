@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import br.com.ideao.alurahotel.model.FormaPagamento;
 import br.com.ideao.alurahotel.model.Reserva;
@@ -41,12 +42,12 @@ public class ReservaDao {
 		return reserva;	
 	}
 
-	public Reserva buscarPorId(Long id) {
+	public List<Reserva> buscarPorId(Long id) {
 	
 		String sql = "SELECT R.id, R.data_entrada, R.data_saida, R.valor, F.id, F.nome FROM reserva R INNER JOIN "
 		+" forma_pagamento F ON  F.id = R.forma_pagamento_id WHERE R.id = ?";
 		
-		Reserva reserva = null;
+		List<Reserva> reservas = new ArrayList<>();
 		
 		try(PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
 			pstmt.setLong(1, id);
@@ -59,13 +60,13 @@ public class ReservaDao {
 					LocalDate data_entrada = rst.getDate(2).toLocalDate();
 					LocalDate data_saida = rst.getDate(3).toLocalDate();
 					
-					reserva = new Reserva(rst.getLong(1), data_entrada, data_saida, fp);
+					reservas.add(new Reserva(rst.getLong(1), data_entrada, data_saida, fp));
 				}
 			}		
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-		return reserva;	
+		return reservas;	
 	}
 
 	public void alterar(Reserva reserva) {
