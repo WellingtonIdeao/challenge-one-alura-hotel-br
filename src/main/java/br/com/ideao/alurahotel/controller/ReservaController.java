@@ -26,4 +26,8 @@ public class ReservaController {
 	public void alterar(Reserva reserva) {
 		this.reservaDao.alterar(reserva);
 	}
+
+	public void deletar(Long id) {
+		this.reservaDao.deletar(id);
+	}
 }

@@ -88,5 +88,14 @@ public class HospedeDao {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public void deletar(Long id) {
+		try(PreparedStatement pstmt = this.connection.prepareStatement("DELETE FROM hospede WHERE id = ?")){
+			pstmt.setLong(1, id);
+			pstmt.execute();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}	
 }

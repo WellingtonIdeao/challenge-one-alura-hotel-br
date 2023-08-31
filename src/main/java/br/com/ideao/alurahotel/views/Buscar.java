@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import br.com.ideao.alurahotel.controller.FormaPagamentoController;
 import br.com.ideao.alurahotel.controller.HospedeController;
@@ -327,6 +328,20 @@ public class Buscar extends JFrame {
 		btnDeletar.setBounds(767, 508, 122, 35);
 		btnDeletar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnDeletar);
+		btnDeletar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(panel.getSelectedIndex() == 0) {
+					deletarReserva();
+//					limparTabelaReserva(modeloReserva);
+				}
+				if(panel.getSelectedIndex() == 1) {
+					deletarHospede();
+//					limparTabelaHospede(modeloHospedes);
+					
+				}
+			}
+		});
 		
 		JLabel lblExcluir = new JLabel("DELETAR");
 		lblExcluir.setHorizontalAlignment(SwingConstants.CENTER);
@@ -353,7 +368,8 @@ public class Buscar extends JFrame {
 						+", nacionalidade = "+nacionalidade+", telefone = "+telefone+", reserva = "+reserva);
 				
 				Hospede hospede = new Hospede(id, nome, sobreNome, data_nasc, nacionalidade, telefone, reserva);
-				this.hospedeController.alterar(hospede);	
+				this.hospedeController.alterar(hospede);
+				JOptionPane.showMessageDialog(this, "Hóspede atualizado com sucesso!");
 			} else {
 				JOptionPane.showMessageDialog(null, "Por favor, selecionar o ID");
 			}
@@ -378,6 +394,7 @@ public class Buscar extends JFrame {
 				reserva  = new Reserva(id, data_entrada, data_saida, fp);
 				if(dataComecaDeHoje(data_entrada, data_saida) && dataEntradaMenorDataSaida(data_entrada, data_saida)) {
 					this.reservaController.alterar(reserva);
+					JOptionPane.showMessageDialog(this, "Reserva atualizada com sucesso!");
 				}else {
 					JOptionPane.showMessageDialog(null, "Por favor, coloque datas válidas");
 				}	
@@ -388,6 +405,39 @@ public class Buscar extends JFrame {
 			JOptionPane.showMessageDialog(null, "Por favor, selecionar o ID");
 		}
 		return reserva;
+	}
+	
+	private void deletarReserva() {
+		try {
+			Object objetoDaLinha = (Object) modeloReserva.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn());
+			if (objetoDaLinha instanceof Long) {
+				Long id = (Long) objetoDaLinha;
+				this.reservaController.deletar(id);
+				modeloReserva.removeRow(tbReservas.getSelectedRow());
+				JOptionPane.showMessageDialog(this, "Reserva excluída com sucesso!");
+			} else {
+				JOptionPane.showMessageDialog(this, "Por favor, selecionar o ID");
+			}
+		} catch(RuntimeException e){
+			JOptionPane.showMessageDialog(this, "Não é possivel excluir reservas com hospedes");
+		}	
+	}
+	private void deletarHospede() {
+		try {
+			Object objetoDaLinha = (Object) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), tbHospedes.getSelectedColumn());
+			if (objetoDaLinha instanceof Long) {
+				Long id = (Long) objetoDaLinha;
+				this.hospedeController.deletar(id);
+				modeloHospedes.removeRow(tbHospedes.getSelectedRow());
+				JOptionPane.showMessageDialog(this, "Hóspede excluído com sucesso!");
+			} else {
+				JOptionPane.showMessageDialog(this, "Por favor, selecionar o ID");
+			}
+		} catch(RuntimeException e){
+			throw new RuntimeException(e);
+//			JOptionPane.showMessageDialog(this, "Não é possivel excluir reservas com hospedes");
+		}
+		
 	}
 
 	//Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"	

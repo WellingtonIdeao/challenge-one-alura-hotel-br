@@ -27,4 +27,9 @@ public class HospedeController {
 		this.hospedeDao.alterar(hospede);
 		
 	}
+
+	public void deletar(Long id) {
+		this.hospedeDao.deletar(id);
+		
+	}
 }

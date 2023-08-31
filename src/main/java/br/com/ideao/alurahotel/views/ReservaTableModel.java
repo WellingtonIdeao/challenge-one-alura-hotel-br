@@ -113,4 +113,9 @@ public class ReservaTableModel extends AbstractTableModel {
 		this.fireTableDataChanged();
 	}
 	
+	public void removeRow(int row){
+		this.reservas.remove(row);
+        fireTableRowsDeleted(row, row);
+	}
+	
 }
