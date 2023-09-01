@@ -14,6 +14,7 @@ import br.com.ideao.alurahotel.model.FormaPagamento;
 import br.com.ideao.alurahotel.model.Hospede;
 import br.com.ideao.alurahotel.model.Nacionalidade;
 import br.com.ideao.alurahotel.model.Reserva;
+import br.com.ideao.alurahotel.validators.DateValidator;
 import br.com.ideao.alurahotel.validators.TextValidator;
 
 import javax.swing.JTable;
@@ -58,6 +59,7 @@ public class Buscar extends JFrame {
 	private List<Hospede> hospedes;
 	private List<Reserva> reservas;
 	private TextValidator textValidator;
+	private DateValidator dateValidator;
 	int xMouse, yMouse;
 
 	/**
@@ -94,6 +96,7 @@ public class Buscar extends JFrame {
 		this.reservaController = new ReservaController();
 		this.hospedeController = new HospedeController();
 		this.textValidator = new TextValidator();
+		this.dateValidator = new DateValidator();
 		
 		txtBuscar = new JTextField();
 		txtBuscar.setBounds(536, 127, 193, 31);
@@ -380,9 +383,6 @@ public class Buscar extends JFrame {
 				String telefone = (String) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), 5);
 				Reserva reserva = (Reserva) modeloHospedes.getValueAt(tbHospedes.getSelectedRow(), 6);
 				
-				System.out.println("id = "+ id +", nome = "+nome + ", sobrenome = "+sobreNome + ", data_nasc = "+ data_nasc
-						+", nacionalidade = "+nacionalidade+", telefone = "+telefone+", reserva = "+reserva);
-				
 				Hospede hospede = new Hospede(id, nome, sobreNome, data_nasc, nacionalidade, telefone, reserva);
 				this.hospedeController.alterar(hospede);
 				JOptionPane.showMessageDialog(this, "Hóspede atualizado com sucesso!");
@@ -405,11 +405,9 @@ public class Buscar extends JFrame {
 				LocalDate data_saida = (LocalDate)modeloReserva.getValueAt(tbReservas.getSelectedRow(), 2);
 				BigDecimal valor = (BigDecimal)modeloReserva.getValueAt(tbReservas.getSelectedRow(), 3);
 				FormaPagamento fp = (FormaPagamento) modeloReserva.getValueAt(tbReservas.getSelectedRow(), 4);
-				System.out.println("id = "+ id +", data_entrada = "+data_entrada
-						+", data_saida = "+data_saida+", valor = "+valor+", forma_pagamento = "+fp);
 				
 				Reserva reserva  = new Reserva(id, data_entrada, data_saida, fp);
-				if(dataComecaDeHoje(data_entrada, data_saida) && dataEntradaMenorDataSaida(data_entrada, data_saida)) {
+				if(dateValidator.dataComecaDeHoje(data_entrada, data_saida) && dateValidator.dataEntradaMenorDataSaida(data_entrada, data_saida)) {
 					this.reservaController.alterar(reserva);
 					JOptionPane.showMessageDialog(this, "Reserva atualizada com sucesso!");
 				}else {
@@ -507,16 +505,5 @@ public class Buscar extends JFrame {
 	 
 	 private List<Hospede> buscarHospede(String sobreNome){
 		 return this.hospedeController.buscarPorSobreNome(sobreNome);
-	 }
-	 
-	 
-	 private Boolean dataComecaDeHoje(LocalDate startDate, LocalDate endDate) {
-		 
-		 LocalDate now = LocalDate.now();
-		 return startDate.compareTo(now) >= 0 && endDate.compareTo(now) >= 0 ;
-	 }
-	 
-	 private Boolean dataEntradaMenorDataSaida(LocalDate startDate, LocalDate endDate) {
-		 return startDate.compareTo(endDate) <= 0;
 	 }
 }

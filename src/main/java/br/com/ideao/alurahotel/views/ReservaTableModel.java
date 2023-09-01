@@ -102,8 +102,7 @@ public class ReservaTableModel extends AbstractTableModel {
 	        case COLUNA_VALOR:
 	            return BigDecimal.class;
 	        case COLUNA_FORMA_PAGAMENTO:
-	            return FormaPagamento.class;
-	            
+	            return FormaPagamento.class;            
 		}
 		return null;
 	}
@@ -117,5 +116,4 @@ public class ReservaTableModel extends AbstractTableModel {
 		this.reservas.remove(row);
         fireTableRowsDeleted(row, row);
 	}
-	
 }

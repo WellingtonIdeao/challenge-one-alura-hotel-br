@@ -131,7 +131,6 @@ public class HospedeTableModel extends AbstractTableModel {
 
 	public void removeRow(int row) {
 		this.hospedes.remove(row);
-        fireTableRowsDeleted(row, row);
-		
+        fireTableRowsDeleted(row, row);		
 	}
 }

@@ -17,6 +17,7 @@ import br.com.ideao.alurahotel.controller.ReservaController;
 import br.com.ideao.alurahotel.model.FormaPagamento;
 import br.com.ideao.alurahotel.model.Reserva;
 import br.com.ideao.alurahotel.utils.Conversor;
+import br.com.ideao.alurahotel.validators.DateValidator;
 
 import java.awt.Font;
 import javax.swing.JComboBox;
@@ -26,7 +27,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JSeparator;
@@ -50,6 +50,7 @@ public class ReservasView extends JFrame {
 	private FormaPagamentoController formaPagamentoController;
 	private ReservaController reservaController;
 	private Reserva  reserva;
+	private DateValidator dateValidator;
 
 	/**
 	 * Launch the application.
@@ -87,6 +88,7 @@ public class ReservasView extends JFrame {
 		
 		this.formaPagamentoController = new FormaPagamentoController();
 		this.reservaController = new ReservaController();
+		this.dateValidator = new DateValidator();
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(null);
@@ -169,7 +171,7 @@ public class ReservasView extends JFrame {
 				//Ativa o evento, após o usuário selecionar as datas, o valor da reserva deve ser calculado
 				String nomePropriedade = evt.getPropertyName();
 				if("date".equals(nomePropriedade)){
-					if(validarDatas(txtDataE.getDate(), txtDataS.getDate())) {
+					if(dateValidator.validarDatas(txtDataE.getDate(), txtDataS.getDate())) {
 						atualizaDadosReserva();
 					} else {
 						JOptionPane.showMessageDialog(null, "Intervalo de datas inválida, por favor, preencha as datas novamente");
@@ -333,7 +335,7 @@ public class ReservasView extends JFrame {
 		btnProximo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (validarDatas(txtDataE.getDate(), txtDataS.getDate()) && !txtValor.getText().isEmpty()) {
+				if (dateValidator.validarDatas(txtDataE.getDate(), txtDataS.getDate()) && !txtValor.getText().isEmpty()) {
 					atualizaDadosReserva();
 					Reserva reserva = registrarReserva();
 					RegistroHospede registro = new RegistroHospede(reserva);
@@ -385,30 +387,5 @@ public class ReservasView extends JFrame {
 		 FormaPagamento fp =  (FormaPagamento) ReservasView.txtFormaPagamento.getSelectedItem();
 		 this.reserva = new Reserva(startDate, endDate, fp);
 		 ReservasView.txtValor.setText(String.valueOf(this.reserva.getValor()));
-	 }
-	 
-	 private Boolean datasPreenchidas(Date startDate, Date endDate){
-		 return  startDate != null && endDate != null;
-	 }
-	 
-	 private Boolean dataComecaDeHoje(LocalDate startDate, LocalDate endDate) {
-		 
-		 LocalDate now = LocalDate.now();
-		 return startDate.compareTo(now) >= 0 && endDate.compareTo(now) >= 0 ;
-	 }
-	 
-	 private Boolean dataEntradaMenorDataSaida(LocalDate startDate, LocalDate endDate) {
-		 return startDate.compareTo(endDate) <= 0;
-	 }
-	 
-	 private Boolean validarDatas(Date startDate, Date endDate){
-		 
-		 if(!datasPreenchidas(startDate, endDate)) {
-			 return false;
-		 }
-		 LocalDate LocalStartDate = Conversor.convertDateToLocalDate(startDate);
-		 LocalDate LocalEndDate = Conversor.convertDateToLocalDate(endDate);
-
-		 return dataComecaDeHoje(LocalStartDate, LocalEndDate) && dataEntradaMenorDataSaida(LocalStartDate, LocalEndDate); 
-	 }
+	 } 
 }
