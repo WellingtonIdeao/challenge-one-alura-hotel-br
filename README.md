@@ -59,8 +59,8 @@ ONE é um programa de educação e empregabilidade com objetivo social de capaci
 
 
 <p align="center">
-  <img alt="Menu principal" title="#Menu principal" src="./assets/tela-menu-principal.png" width="200px">
-  <img alt="Tela de login" title="#Login" src="./assets/tela-login.png" width="200px">
+  <img alt="Menu principal" title="#Menu principal" src="./assets/tela-menu-principal.png" width="300px">
+  <img alt="Tela de login" title="#Login" src="./assets/tela-login.png" width="300px">
 </p>
 <p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
   <img alt="Busca de reservas" title="#Busca de reservas" src="./assets/tela-buscar-reservas.png" width="300px">
@@ -127,7 +127,7 @@ As seguintes ferramentas e tecnologias foram usadas na construção do projeto:
 * [JDBC - Java Database Connectivity](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc)
 * [Java Swing Date Picker](https://github.com/LGoodDatePicker/LGoodDatePicker)
 * [c3p0 - pool de conexões JDBC](https://www.mchange.com/projects/c3p0)
-* [Apache Commons codec - usada na criação hash256](https://commons.apache.org/proper/commons-codec)
+* [Apache Commons codec - usada na criação hash SHA256](https://commons.apache.org/proper/commons-codec)
 
 
 ---
