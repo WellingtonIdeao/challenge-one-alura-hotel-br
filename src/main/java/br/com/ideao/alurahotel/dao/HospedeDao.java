@@ -1,6 +1,7 @@
 package br.com.ideao.alurahotel.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,11 +26,13 @@ public class HospedeDao {
 				"VALUES (?, ?, ?, ?, ?, ?)";
 
 		try(PreparedStatement pstmt = this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			Date dataNasc = Date.valueOf(hospede.getDataNascimento());
+			
 			pstmt.setString(1, hospede.getNome());
 			pstmt.setString(2, hospede.getSobreNome());
 			pstmt.setLong(3, hospede.getNacionalidade().getId());
 			pstmt.setString(4, hospede.getTelefone());
-			pstmt.setString(5, hospede.getDataNascimento().toString());
+			pstmt.setDate(5, dataNasc);
 			pstmt.setLong(6, hospede.getReserva().getId());
 			
 			pstmt.execute();

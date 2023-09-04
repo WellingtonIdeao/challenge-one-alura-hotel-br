@@ -1,6 +1,7 @@
 package br.com.ideao.alurahotel.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,8 +25,11 @@ public class ReservaDao {
 						"VALUES (?, ?, ?, ?)";
 		
 		try(PreparedStatement pstmt = this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-			pstmt.setString(1, reserva.getDataEntrada().toString());
-			pstmt.setString(2, reserva.getDataSaida().toString());
+			Date dataEntrada = Date.valueOf(reserva.getDataEntrada());
+			Date dataSaida = Date.valueOf(reserva.getDataSaida());
+			
+			pstmt.setDate(1, dataEntrada);
+			pstmt.setDate(2, dataSaida);
 			pstmt.setBigDecimal(3, reserva.getValor());
 			pstmt.setLong(4, reserva.getFormaPagmento().getId());
 			
@@ -72,8 +76,12 @@ public class ReservaDao {
 	public void alterar(Reserva reserva) {
 		String sql = "UPDATE reserva SET data_entrada = ?, data_saida = ?, valor = ?, forma_pagamento_id = ? WHERE id = ?";
 		try (PreparedStatement pstmt = this.connection.prepareStatement(sql)){
-			pstmt.setString(1, reserva.getDataEntrada().toString());
-			pstmt.setString(2, reserva.getDataSaida().toString());
+			Date dataEntrada = Date.valueOf(reserva.getDataEntrada());
+			Date dataSaida = Date.valueOf(reserva.getDataSaida());
+			
+			
+			pstmt.setDate(1, dataEntrada);
+			pstmt.setDate(2, dataSaida);
 			pstmt.setBigDecimal(3, reserva.getValor());
 			pstmt.setLong(4, reserva.getFormaPagmento().getId());
 			pstmt.setLong(5, reserva.getId());
