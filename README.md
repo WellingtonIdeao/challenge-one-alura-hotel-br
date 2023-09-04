@@ -126,7 +126,7 @@ As seguintes ferramentas e tecnologias foram usadas na construção do projeto:
 * [Java Swing](https://docs.oracle.com/javase/tutorial/uiswing)
 * [JDBC - Java Database Connectivity](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc)
 * [Java Swing Date Picker](https://github.com/LGoodDatePicker/LGoodDatePicker)
-* [c3p0 - pool de conexões JDBC](https://www.mchange.com/projects/c3p0)
+* [c3p0 - Pool de conexões JDBC](https://www.mchange.com/projects/c3p0)
 * [Apache Commons codec - usada na criação hash SHA256](https://commons.apache.org/proper/commons-codec)
 
 
