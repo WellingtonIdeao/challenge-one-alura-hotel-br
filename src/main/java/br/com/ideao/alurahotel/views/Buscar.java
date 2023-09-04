@@ -391,7 +391,7 @@ public class Buscar extends JFrame {
 				FormaPagamento fp = (FormaPagamento) modeloReserva.getValueAt(tbReservas.getSelectedRow(), 4);
 				
 				Reserva reserva  = new Reserva(id, data_entrada, data_saida, fp);
-				if(dateValidator.dataComecaDeHoje(data_entrada, data_saida) && dateValidator.dataEntradaMenorDataSaida(data_entrada, data_saida)) {
+				if(dateValidator.dataEntradaMenorDataSaida(data_entrada, data_saida)) {
 					this.reservaController.alterar(reserva);
 					JOptionPane.showMessageDialog(this, "Reserva atualizada com sucesso!");
 				}else {
