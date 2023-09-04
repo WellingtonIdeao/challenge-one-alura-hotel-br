@@ -78,11 +78,13 @@ public class HospedeDao {
 				+ " telefone = ?, data_nascimento = ?, reserva_id = ? WHERE id = ?";
 		
 		try (PreparedStatement pstmt = this.connection.prepareStatement(sql)){
+			Date dataNasc = Date.valueOf(hospede.getDataNascimento());
+			
 			pstmt.setString(1, hospede.getNome());
 			pstmt.setString(2, hospede.getSobreNome());
 			pstmt.setLong(3, hospede.getNacionalidade().getId());
 			pstmt.setString(4, hospede.getTelefone());
-			pstmt.setString(5, hospede.getDataNascimento().toString());
+			pstmt.setDate(5, dataNasc);
 			pstmt.setLong(6, hospede.getReserva().getId());
 			pstmt.setLong(7, hospede.getId());
 			
